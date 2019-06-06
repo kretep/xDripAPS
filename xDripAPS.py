@@ -100,6 +100,8 @@ class Entries(Resource):
             results_as_dict.append(result_as_dict)
 
         conn.close()
+
+        print 'Returning %d results' % len(results_as_dict)
 	return results_as_dict
 
     def post(self):
@@ -135,12 +137,15 @@ class Entries(Resource):
         # Get column values (json_data will contain exactly one record if data source is xDrip
         # but could contain more than one record if data source is xDripG5 for iOS)
         for entry in json_data:
+            type            = entry['type']
+            if type != 'sgv':
+                continue
+
             device          = entry['device']
             date            = entry['date']
             dateString      = entry['dateString']
             sgv             = entry['sgv']
             direction       = entry['direction']
-            type            = entry['type']
             filtered        = entry['filtered'] if 'filtered' in entry else None
             unfiltered      = entry['unfiltered'] if 'unfiltered' in entry else None
             rssi            = entry['rssi'] if 'rssi' in entry else None
@@ -157,6 +162,7 @@ class Entries(Resource):
 
         conn.close()
 
+        print 'Inserted %d entries' % len(inserted_entries)
         # return entries that have been added successfully
         return inserted_entries, 200
 
