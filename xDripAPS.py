@@ -1,6 +1,7 @@
 import json
 import os
 import sqlite3
+import hashlib
 from flask import Flask, request
 from flask_restful import Resource, Api
 
@@ -109,6 +110,8 @@ class Entries(Resource):
 
         # Get API_SECRET environment variable
         env_secret_hashed = os.environ['API_SECRET']
+        if env_secret_hashed.startswith('token='):
+            env_secret_hashed = hashlib.sha1(env_secret_hashed).hexdigest()
 
         # Authentication check
         if request_secret_hashed != env_secret_hashed:
@@ -165,6 +168,8 @@ class Test(Resource):
 
         # Get API_SECRET environment variable
         env_secret_hashed = os.environ['API_SECRET']
+        if env_secret_hashed.startswith('token='):
+            env_secret_hashed = hashlib.sha1(env_secret_hashed).hexdigest()
 
         # Authentication check
         if request_secret_hashed != env_secret_hashed:
